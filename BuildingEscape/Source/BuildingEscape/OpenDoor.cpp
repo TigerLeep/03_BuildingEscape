@@ -2,7 +2,7 @@
 
 #include "OpenDoor.h"
 #include "Gameframework/Actor.h"
-
+#include "Engine/World.h"
 
 // Sets default values for this component's properties
 UOpenDoor::UOpenDoor()
@@ -17,9 +17,15 @@ UOpenDoor::UOpenDoor()
 void UOpenDoor::BeginPlay()
 {
     Super::BeginPlay();
-    //auto ObjectName = GetOwner()->GetName();
-    //auto NewRotator = FRotator(0.0f, 60.0f, 0.0f);
-    //GetOwner()->SetActorRotation(NewRotator);
+    
+    ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
+}
+
+void UOpenDoor::OpenDoor()
+{
+    auto ObjectName = GetOwner()->GetName();
+    auto NewRotator = FRotator(0.0f, -60.0f, 0.0f);
+    GetOwner()->SetActorRotation(NewRotator);
 }
 
 
@@ -28,15 +34,20 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-    auto OwnerRotator = GetOwner()->GetActorRotation();
-    if (OwnerRotator.Yaw > -60.f)
+    if (PressurePlate->IsOverlappingActor(ActorThatOpens))
     {
-        OwnerRotator.Yaw -= (15.0f * DeltaTime);
+        OpenDoor();
     }
-    if (OwnerRotator.Yaw < -60.f)
-    {
-        OwnerRotator.Yaw = -60.0;
-    }
-    GetOwner()->SetActorRotation(OwnerRotator);
+
+    //auto OwnerRotator = GetOwner()->GetActorRotation();
+    //if (OwnerRotator.Yaw > -60.f)
+    //{
+    //    OwnerRotator.Yaw -= (15.0f * DeltaTime);
+    //}
+    //if (OwnerRotator.Yaw < -60.f)
+    //{
+    //    OwnerRotator.Yaw = -60.0;
+    //}
+    //GetOwner()->SetActorRotation(OwnerRotator);
 }
 
